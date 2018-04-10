@@ -1,4 +1,4 @@
-package reader
+package pagination
 
 import (
 	"database/sql"
