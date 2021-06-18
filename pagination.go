@@ -11,7 +11,7 @@ import (
 )
 
 type PaginatedResponse interface {
-	Rows() *sql.Rows
+	Rows() *gosql.Rows
 	Pagination() pagination.Pagination
 }
 
@@ -30,7 +30,7 @@ func (r *DefaultPaginatedResponse) Pagination() pagination.Pagination {
 	return r.pagination
 }
 
-func QueryPaginatedAll(db *sql.DB, opts pagination.PaginationOptions, cb PaginatedResponseCallback, query string, args ...interface{}) error {
+func QueryPaginatedAll(db *gosql.DB, opts pagination.PaginationOptions, cb PaginatedResponseCallback, query string, args ...interface{}) error {
 
 	for {
 
@@ -60,12 +60,12 @@ func QueryPaginatedAll(db *sql.DB, opts pagination.PaginationOptions, cb Paginat
 	return nil
 }
 
-func QueryPaginated(db *sql.DB, opts pagination.PaginationOptions, query string, args ...interface{}) (PaginatedResponse, error) {
+func QueryPaginated(db *gosql.DB, opts pagination.PaginationOptions, query string, args ...interface{}) (PaginatedResponse, error) {
 
 	done_ch := make(chan bool)
 	err_ch := make(chan error)
 	count_ch := make(chan int64)
-	rows_ch := make(chan *sql.Rows)
+	rows_ch := make(chan *gosql.Rows)
 
 	var page int
 	var per_page int
@@ -136,7 +136,7 @@ func QueryPaginated(db *sql.DB, opts pagination.PaginationOptions, query string,
 	}()
 
 	var total_count int64
-	var rows *sql.Rows
+	var rows *gosql.Rows
 
 	remaining := 2
 
