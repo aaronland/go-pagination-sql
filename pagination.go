@@ -1,10 +1,10 @@
-package pagination
+package sql
 
 import (
-	"database/sql"
+	gosql "database/sql"
 	"fmt"
-	aa "github.com/aaronland/go-pagination"
-	aa_countable "github.com/aaronland/go-pagination/countable"
+	"github.com/aaronland/go-pagination"
+	"github.com/aaronland/go-pagination/countable"
 	_ "log"
 	"math"
 	"strings"
@@ -12,25 +12,25 @@ import (
 
 type PaginatedResponse interface {
 	Rows() *sql.Rows
-	Pagination() aa.Pagination
+	Pagination() pagination.Pagination
 }
 
 type PaginatedResponseCallback func(PaginatedResponse) error
 
 type DefaultPaginatedResponse struct {
-	rows       *sql.Rows
-	pagination aa.Pagination
+	rows       *gosql.Rows
+	pagination pagination.Pagination
 }
 
-func (r *DefaultPaginatedResponse) Rows() *sql.Rows {
+func (r *DefaultPaginatedResponse) Rows() *gosql.Rows {
 	return r.rows
 }
 
-func (r *DefaultPaginatedResponse) Pagination() aa.Pagination {
+func (r *DefaultPaginatedResponse) Pagination() pagination.Pagination {
 	return r.pagination
 }
 
-func QueryPaginatedAll(db *sql.DB, opts aa.PaginationOptions, cb PaginatedResponseCallback, query string, args ...interface{}) error {
+func QueryPaginatedAll(db *sql.DB, opts pagination.PaginationOptions, cb PaginatedResponseCallback, query string, args ...interface{}) error {
 
 	for {
 
@@ -60,7 +60,7 @@ func QueryPaginatedAll(db *sql.DB, opts aa.PaginationOptions, cb PaginatedRespon
 	return nil
 }
 
-func QueryPaginated(db *sql.DB, opts aa.PaginationOptions, query string, args ...interface{}) (PaginatedResponse, error) {
+func QueryPaginated(db *sql.DB, opts pagination.PaginationOptions, query string, args ...interface{}) (PaginatedResponse, error) {
 
 	done_ch := make(chan bool)
 	err_ch := make(chan error)
@@ -156,67 +156,7 @@ func QueryPaginated(db *sql.DB, opts aa.PaginationOptions, query string, args ..
 		}
 	}
 
-	/*
-		pages := int(math.Ceil(float64(total_count) / float64(per_page)))
-
-		next_page := 0
-		previous_page := 0
-
-		if pages > 1 {
-
-		if page > 1 {
-			previous_page = page  - 1
-
-		}
-
-		if page < pages {
-			next_page = page + 1
-		}
-
-		}
-
-		pages_range := make([]int, 0)
-
-		var range_min int
-		var range_max int
-		var range_mid int
-
-		var rfloor int
-		var adjmin int
-		var adjmax int
-
-		if pages > 10 {
-
-		   range_mid = 7
-		   rfloor = int(math.Floor(float64(range_mid) / 2.0))
-
-		   range_min = page - rfloor
-		   range_max = page + rfloor
-
-		   if range_min <= 0 {
-
-		   	adjmin = int(math.Abs(float64(range_min)))
-
-			range_min = 1
-			range_max = page + adjmin + 1
-		   }
-
-		   if range_max >= pages {
-
-		   	adjmax = range_max - pages
-
-			range_min = range_min - adjmax
-			range_max = pages
-		   }
-
-		   for i := range_min; range_min <= range_max; range_min++ {
-		   	pages_range = append(pages_range, i)
-		   }
-		}
-
-	*/
-
-	pg, err := aa_countable.NewPaginationFromCountWithOptions(opts, total_count)
+	pg, err := countable.NewPaginationFromCountWithOptions(opts, total_count)
 
 	if err != nil {
 		return nil, err

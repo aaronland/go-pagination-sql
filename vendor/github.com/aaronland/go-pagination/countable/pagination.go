@@ -8,34 +8,38 @@ import (
 )
 
 type CountablePagination struct {
-	pagination.Pagination
-	total         int64
-	per_page      int64
-	page          int64
-	pages         int64
-	next_page     int64
-	previous_page int64
-	pages_range   []int64
+	pagination.Pagination `json:",omitempty"`
+	TotalCount            int64   `json:"total"`
+	PerPageCount          int64   `json:"per_page"`
+	PageCount             int64   `json:"page"`
+	PagesCount            int64   `json:"pages"`
+	NextPageURI           int64   `json:"next_page"`
+	PreviousPageURI       int64   `json:"previous_page"`
+	PagesRange            []int64 `json:"pages_range"`
 }
 
 func (p *CountablePagination) Total() int64 {
-	return p.total
+	return p.TotalCount
 }
 
 func (p *CountablePagination) PerPage() int64 {
-	return p.per_page
+	return p.PerPageCount
 }
 
 func (p *CountablePagination) Page() int64 {
-	return p.page
+	return p.PageCount
 }
 
 func (p *CountablePagination) Pages() int64 {
-	return p.pages
+	return p.PagesCount
 }
 
 func (p *CountablePagination) NextPage() int64 {
-	return p.next_page
+	return p.NextPageURI
+}
+
+func (p *CountablePagination) PreviousPage() int64 {
+	return p.PreviousPageURI
 }
 
 func (p *CountablePagination) NextURL(u *url.URL) string {
@@ -70,12 +74,8 @@ func (p *CountablePagination) PreviousURL(u *url.URL) string {
 	return u.String()
 }
 
-func (p *CountablePagination) PreviousPage() int64 {
-	return p.previous_page
-}
-
 func (p *CountablePagination) Range() []int64 {
-	return p.pages_range
+	return p.PagesRange
 }
 
 func NewPaginationFromCount(total_count int64) (pagination.Pagination, error) {
@@ -152,13 +152,13 @@ func NewPaginationFromCountWithOptions(opts pagination.PaginationOptions, total_
 	}
 
 	pg := &CountablePagination{
-		total:         total_count,
-		per_page:      per_page,
-		page:          page,
-		pages:         pages,
-		next_page:     next_page,
-		previous_page: previous_page,
-		pages_range:   pages_range,
+		TotalCount:      total_count,
+		PerPageCount:    per_page,
+		PageCount:       page,
+		PagesCount:      pages,
+		NextPageURI:     next_page,
+		PreviousPageURI: previous_page,
+		PagesRange:      pages_range,
 	}
 
 	return pg, nil
