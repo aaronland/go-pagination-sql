@@ -109,9 +109,9 @@ func QueryPaginated(db *gosql.DB, opts pagination.Options, query string, args ..
 		// please make fewer ((((())))) s
 		// (20180409/thisisaaronland)
 
-		p := countable.PageFromOptions(opts)
+		page_num := countable.PageFromOptions(opts)
+		page = int(math.Max(1.0, float64(page_num)))
 
-		page = int(math.Max(1.0, float64(p)))
 		per_page = int(math.Max(1.0, float64(opts.PerPage())))
 		spill = int(math.Max(1.0, float64(opts.Spill())))
 
