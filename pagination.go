@@ -3,11 +3,12 @@ package sql
 import (
 	gosql "database/sql"
 	"fmt"
-	"github.com/aaronland/go-pagination"
-	"github.com/aaronland/go-pagination/countable"
 	_ "log"
 	"math"
 	"strings"
+
+	"github.com/aaronland/go-pagination"
+	"github.com/aaronland/go-pagination/countable"
 )
 
 type PaginatedResponse interface {
@@ -30,7 +31,7 @@ func (r *DefaultPaginatedResponse) Results() pagination.Results {
 	return r.results
 }
 
-func QueryPaginatedAll(db *gosql.DB, opts pagination.Options, cb PaginatedResponseCallback, query string, args ...interface{}) error {
+func QueryPaginatedAll(db *gosql.DB, opts pagination.Options, cb PaginatedResponseCallback, query string, args ...any) error {
 
 	for {
 
@@ -60,7 +61,7 @@ func QueryPaginatedAll(db *gosql.DB, opts pagination.Options, cb PaginatedRespon
 	return nil
 }
 
-func QueryPaginated(db *gosql.DB, opts pagination.Options, query string, args ...interface{}) (PaginatedResponse, error) {
+func QueryPaginated(db *gosql.DB, opts pagination.Options, query string, args ...any) (PaginatedResponse, error) {
 
 	done_ch := make(chan bool)
 	err_ch := make(chan error)
